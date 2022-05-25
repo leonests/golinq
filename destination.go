@@ -63,6 +63,20 @@ func (src IEnumerator[K, V]) Result(res any) {
 	}
 }
 
+func (src IEnumerator[K, V]) First() V {
+	_, v, _ := src.Enumerate()()
+	return v
+}
+
+func (src IEnumerator[K, V]) Last() V {
+	var res V
+	moveNext := src.Enumerate()
+	for _, v, ok := moveNext(); ok; _, v, ok = moveNext() {
+		res = v
+	}
+	return res
+}
+
 func (src Enumerator) ToSlice() []any {
 	res := make([]any, 0)
 	moveNext := src.Enumerate()
