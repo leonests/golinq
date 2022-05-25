@@ -45,7 +45,8 @@ var persons = []Person{
 	},
 }
 
-func Example_WhoIsYoungest() {
+func ExampleFromSlice() {
+	// Who Is Youngest
 	// without considering persons with the same age
 	res := FromSlice(persons).
 		OrderBy(func(i int, p Person) any { return p.Age }).
@@ -54,7 +55,8 @@ func Example_WhoIsYoungest() {
 	// Output: Jack
 }
 
-func Example_WhoHasMostExpensiveBook() {
+func ExampleFromMap() {
+	// Who Has Most Expensive Book
 	res := FromSlice(persons).
 		OrderBy(func(i int, p Person) any {
 			return FromMap(p.BookPrices).OrderBy(func(s string, f float64) any {
@@ -66,7 +68,8 @@ func Example_WhoHasMostExpensiveBook() {
 	// Output: Rose
 }
 
-func Example_WhoseHobbyContainsBasketball() {
+func ExampleSelect() {
+	// Whose Hobbies Contain Basketball
 	res := FromSlice(persons).
 		Where(func(i int, p Person) bool {
 			return FromSlice(p.Hobbies).Contains(func(i int, s string) bool {
@@ -79,20 +82,22 @@ func Example_WhoseHobbyContainsBasketball() {
 	// Output: [Jack Leon]
 }
 
-func Example_WhoHasBiggestLuckyNumber() {
-	res := FromSlice(persons).
+func ExampleJust() {
+	// Who Has Biggest Lucky Number
+	res := Just(persons...).
 		OrderBy(func(i int, p Person) any {
-			return FromSlice(p.LuckyNumbers).OrderBy(func(i1, i2 int) any {return i2}).Last()
+			return FromSlice(p.LuckyNumbers).OrderBy(func(i1, i2 int) any { return i2 }).Last()
 		}).
 		Last().Name
 	fmt.Println(res)
 	// Output: Rose
 }
 
-func Example_AgeSequence() {
+func Example() {
+	// Age Sequence
 	res := FromSlice(persons).
-	Select(func(i int, p Person) any {return p.Age}).
-	ToSlice()
+		Select(func(i int, p Person) any { return p.Age }).
+		ToSlice()
 	fmt.Println(res)
 	// Output: [15 18 20]
 }
