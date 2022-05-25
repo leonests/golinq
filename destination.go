@@ -71,8 +71,8 @@ func (src IEnumerator[K, V]) Result(res any) {
 	}
 }
 
-func (src Enumerator) ToSlice() []interface{} {
-	res := make([]interface{}, 0)
+func (src Enumerator) ToSlice() []any {
+	res := make([]any, 0)
 	moveNext := src.Enumerate()
 	for _, v, ok := moveNext(); ok; _, v, ok = moveNext() {
 		res = append(res, v)

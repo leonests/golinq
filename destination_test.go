@@ -23,7 +23,7 @@ func TestGenericDestination(t *testing.T) {
 		MapIntStr: map[int]string{-1: "a"},
 		MapIntInt: map[int]int{5: 6},
 		FloatList: []float64{2.0},
-		AnyList:   []interface{}{"1", "2", "3", "4", "5", "6"},
+		AnyList:   []any{"1", "2", "3", "4", "5", "6"},
 	}
 	t.Run("String", func(t *testing.T) {
 		res := FromString(test.Str).ToSlice()
@@ -65,7 +65,7 @@ func TestGenericDestination(t *testing.T) {
 	})
 
 	t.Run("IntList1", func(t *testing.T) {
-		res := make([]interface{}, 0)
+		res := make([]any, 0)
 		for c := range FromSlice(test.IntList).Select(func(i int, v int) any { return fmt.Sprintf("%d", v) }).ToChannel() {
 			res = append(res, c)
 		}
