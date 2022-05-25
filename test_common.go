@@ -13,4 +13,5 @@ type GenericTest struct {
 	ChanFloat chan float64
 	FloatList []float64
 	ArrayAny  [3]any
+	BoolList  []bool
 }
