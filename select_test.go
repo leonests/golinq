@@ -15,7 +15,7 @@ func TestGenericSelect(t *testing.T) {
 	}
 	wanted := GenericTest{
 		RuneList:  []rune{'g', 'n', 'r', 'i'},
-		MapIntInt: map[int]int{0: -1, 1: 2, 2: 3},
+		MapIntInt: map[int]int{0: -1},
 		AnyList:   []any{2.0, 4.0, 6.0},
 		BoolList:  []bool{false, false, true, false, false, true},
 	}
@@ -37,7 +37,7 @@ func TestGenericSelect(t *testing.T) {
 
 	t.Run("MapIntStr", func(t *testing.T) {
 		var res map[int]int
-		FromMap(test.MapIntStr).Select(func(k int, v string) any { return k }).Result(&res)
+		FromMap(test.MapIntStr).Where(func(i int, s string) bool {return i < 0}).Select(func(k int, v string) any { return k }).Result(&res)
 		if !reflect.DeepEqual(res, wanted.MapIntInt) {
 			t.Fail()
 		}
@@ -54,6 +54,3 @@ func TestGenericSelect(t *testing.T) {
 		}
 	})
 }
-
-
-
