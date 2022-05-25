@@ -71,7 +71,7 @@ func TestFromMap(t *testing.T) {
 
 	t.Run("StringList", func(t *testing.T) {
 		res := FromSlice(test.StrList).ToMap()
-		if !reflect.DeepEqual(res, wanted.MapStrInt) {
+		if !reflect.DeepEqual(res, wanted.MapIntStr) {
 			t.Fail()
 		}
 	})
@@ -151,7 +151,7 @@ func TestFromJustAndRange(t *testing.T) {
 	})
 	t.Run("JustAny", func(t *testing.T) {
 		res := Just(test.ArrayAny[:]).ToSlice()
-		if !reflect.DeepEqual(res, [][]any{{1,2,3}}) {
+		if !reflect.DeepEqual(res, [][]any{{1, 2, 3}}) {
 			t.Fail()
 		}
 	})
@@ -163,4 +163,3 @@ func TestFromJustAndRange(t *testing.T) {
 		}
 	})
 }
-
