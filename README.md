@@ -3,4 +3,7 @@
 [![Go Report](https://goreportcard.com/badge/github.com/leonests/golinq)](https://goreportcard.com/report/github.com/leonests/golinq)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 ------
-# golinq
+# Golinq
+
+Golinq provides support for language integrated query (LINQ) in Go, like C# LINQ.
+
