@@ -34,14 +34,6 @@ func (src IEnumerator[K, V]) ToChannel() <-chan V {
 	return res
 }
 
-func (src IEnumerator[K, V]) Foreach(action func(K, V)) {
-	moveNext := src.Enumerate()
-
-	for k, v, ok := moveNext(); ok; k, v, ok = moveNext() {
-		action(k, v)
-	}
-}
-
 // Result stores the kv pair IEnumerable[K, V] in the value pointed to by res.
 // If res is nil or not a pointer, Result will directly return.
 func (src IEnumerator[K, V]) Result(res any) {
