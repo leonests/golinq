@@ -15,6 +15,7 @@ func TestGenericDistinct(t *testing.T) {
 		ChanFloat: make(chan float64, 3),
 	}
 	wanted := GenericTest{
+		Int:       1,
 		RuneList:  []int32{'g', 'e', 'n', 'r', 'i', 'c'},
 		IntList:   []int{1, 3, 4, 5, 2},
 		StrList:   []string{"g", "e", "n", "r", "i", "c"},
@@ -43,8 +44,8 @@ func TestGenericDistinct(t *testing.T) {
 	})
 
 	t.Run("MapIntStr", func(t *testing.T) {
-		res := FromMap(test.MapIntStr).DistinctBy(func(i int, s string) any {return s}).ToMap()
-		if !reflect.DeepEqual(res, wanted.MapIntStr) {
+		res := FromMap(test.MapIntStr).DistinctBy(func(i int, s string) any { return s }).ToMap()
+		if !reflect.DeepEqual(len(res), wanted.Int) {
 			t.Fail()
 		}
 	})
@@ -54,7 +55,7 @@ func TestGenericDistinct(t *testing.T) {
 		test.ChanFloat <- 2.0
 		test.ChanFloat <- 3.0
 		close(test.ChanFloat)
-		res := FromChan(test.ChanFloat).DistinctBy(func(i int, f float64) any {return f-float64(i)}).ToSlice()
+		res := FromChan(test.ChanFloat).DistinctBy(func(i int, f float64) any { return f - float64(i) }).ToSlice()
 		if !reflect.DeepEqual(res, wanted.FloatList) {
 			t.Fail()
 		}
