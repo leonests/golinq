@@ -19,10 +19,10 @@ When used with Go modules, use the following import path:
 
 ## Quickstart
 
-**Example 1: Find the youngest person
+**Example 1: Find the youngest person**
 
 ```go
-import "github.com/leonests/golinq"
+import . "github.com/leonests/golinq"
 
 type Person struct {
 	Name         string
@@ -35,8 +35,32 @@ type Person struct {
 
 var persons []Person
 
-res := FromSlice(persons).
-		OrderBy(func(i int, p Person) any { 
-			return p.Age 
-		}).First().Name
+res := FromSlice(persons).OrderBy(func(i int, p Person) any {
+			return p.Age
+	}).First().Name
+```
+
+**Example 2: Find who has a hobby of basketball**
+
+```go
+import . "github.com/leonests/golinq"
+
+type Person struct {
+	Name         string
+	Age          int
+	Hobbies      []string
+	LuckyNumbers []int
+	BookPrices   map[string]float64
+}
+...
+
+var persons []Person
+
+res := FromSlice(persons).Where(func(i int, p Person) bool {
+		return FromSlice(p.Hobbies).Contains(func(i int, hobby string) bool {
+			return hobby == "basketball"
+		})
+	}).Select(func(i int, p Person) any { 
+		return p.Name 
+	}).ToSlice()
 ```
