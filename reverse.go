@@ -1,8 +1,8 @@
 package golinq
 
-func (src IEnumerator[K, V]) Reverse() IEnumerator[K, V] {
-	return IEnumerator[K, V]{
-		Enumerate: func() IMoveNext[K, V] {
+func (src Enumerator[K, V]) Reverse() Enumerator[K, V] {
+	return Enumerator[K, V]{
+		Enumerate: func() MoveNext[K, V] {
 			moveNext := src.Enumerate()
 
 			items := make(sorters[K, V], 0)

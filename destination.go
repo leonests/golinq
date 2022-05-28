@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-func (src IEnumerator[K, V]) ToSlice() []V {
+func (src Enumerator[K, V]) ToSlice() []V {
 	res := make([]V, 0)
 	moveNext := src.Enumerate()
 	for _, v, ok := moveNext(); ok; _, v, ok = moveNext() {
@@ -13,7 +13,7 @@ func (src IEnumerator[K, V]) ToSlice() []V {
 	return res
 }
 
-func (src IEnumerator[K, V]) ToChannel() <-chan V {
+func (src Enumerator[K, V]) ToChannel() <-chan V {
 	res := make(chan V)
 	moveNext := src.Enumerate()
 	go func() {
@@ -25,7 +25,7 @@ func (src IEnumerator[K, V]) ToChannel() <-chan V {
 	return res
 }
 
-func (src IEnumerator[K, V]) AsMap(res any) {
+func (src Enumerator[K, V]) AsMap(res any) {
 	val := reflect.ValueOf(res)
 	if val.Kind() != reflect.Pointer || val.IsNil() {
 		return
@@ -40,7 +40,7 @@ func (src IEnumerator[K, V]) AsMap(res any) {
 
 // AsSlice stores the K-V pair of IEnumerable[K, V] in the value pointed to by res.
 // If res is nil or not a pointer, AsResult will directly return.
-func (src IEnumerator[K, V]) AsSlice(res any) {
+func (src Enumerator[K, V]) AsSlice(res any) {
 	val := reflect.ValueOf(res)
 	if val.Kind() != reflect.Pointer || val.IsNil() {
 		return
@@ -53,12 +53,12 @@ func (src IEnumerator[K, V]) AsSlice(res any) {
 	val.Elem().Set(slice)
 }
 
-func (src IEnumerator[K, V]) First() V {
+func (src Enumerator[K, V]) First() V {
 	_, v, _ := src.Enumerate()()
 	return v
 }
 
-func (src IEnumerator[K, V]) Last() V {
+func (src Enumerator[K, V]) Last() V {
 	var res V
 	moveNext := src.Enumerate()
 	for _, v, ok := moveNext(); ok; _, v, ok = moveNext() {

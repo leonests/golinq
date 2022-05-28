@@ -1,13 +1,13 @@
 package golinq
 
-func (src IEnumerator[K, V]) Take(count int) IEnumerator[K, V] {
-	return IEnumerator[K, V]{
-		Enumerate: func() IMoveNext[K, V] {
+func (src Enumerator[K, V]) Take(count int) Enumerator[K, V] {
+	return Enumerator[K, V]{
+		Enumerate: func() MoveNext[K, V] {
 			moveNext := src.Enumerate()
-			n := count 
-			return func()(k K, v V, ok bool){
+			n := count
+			return func() (k K, v V, ok bool) {
 				if n <= 0 {
-					return 
+					return
 				}
 				n--
 				return moveNext()

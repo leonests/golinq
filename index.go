@@ -1,6 +1,6 @@
 package golinq
 
-func (src IEnumerator[K, V]) IndexOf(predict func(K, V) bool) int {
+func (src Enumerator[K, V]) IndexOf(predict func(K, V) bool) int {
 	moveNext := src.Enumerate()
 	index := 0
 	for k, v, ok := moveNext(); ok; k, v, ok = moveNext() {

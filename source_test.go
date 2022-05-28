@@ -161,3 +161,96 @@ func TestFromJustAndRange(t *testing.T) {
 		}
 	})
 }
+
+type col struct {
+	item0 int
+	item1 bool
+	item2 string
+	item3 float64
+	item4 interface{}
+}
+
+func (c col) Enumerate() MoveNext[any, any] {
+	index := 0
+	return func() (k, v any, ok bool) {
+		ok = true
+		switch index {
+		case 0:
+			v = c.item0
+		case 1:
+			v = c.item1
+		case 2:
+			v = c.item2
+		case 3:
+			v = c.item3
+		case 4:
+			v = c.item4
+		default:
+			ok = false
+		}
+		k = index
+		index++
+		return
+	}
+}
+
+func TestFrom(t *testing.T) {
+	t.Parallel()
+	t.Run("Slice", func(t *testing.T) {
+		ch := make(chan any, 3)
+		ch <- -1
+		ch <- -2
+		ch <- -3
+		close(ch)
+
+		tests := []struct {
+			input  any
+			wanted any
+		}{
+			{
+				[]string{"a", "b", "c"},
+				[]any{"a", "b", "c"},
+			},
+			{
+				[]int{1, 2, 3},
+				[]any{1, 2, 3},
+			},
+			{
+				[]any{1, "2", []any{1, 2, 3}},
+				[]any{1, "2", []any{1, 2, 3}},
+			},
+			{
+				ch,
+				[]any{-1, -2, -3},
+			},
+			{
+				"abcde",
+				[]any{'a', 'b', 'c', 'd', 'e'},
+			},
+			{
+				col{item0: 1, item1: true, item2: "abc", item3: -3.1415926, item4: map[string]any{"3": []any{1, 2.2, 3.3}}},
+				[]any{1, true, "abc", -3.1415926, map[string]any{"3": []any{1, 2.2, 3.3}}},
+			},
+		}
+		for _, test := range tests {
+			res := From(test.input).ToSlice()
+			assert.EqualValues(t, test.wanted, res)
+		}
+	})
+
+	t.Run("MapIntString", func(t *testing.T) {
+		input := map[int]string{1: "1", 2: "2", 3: "3"}
+		wanted := map[int]string{1: "1", 2: "2", 3: "3"}
+		res := make(map[int]string)
+		From(input).AsMap(&res)
+		assert.EqualValues(t, wanted, res)
+	})
+
+	t.Run("MapStringAny", func(t *testing.T) {
+		input := map[string]any{"3": []any{1, 2.2, 3.3}}
+		wanted := map[string]any{"3": []any{1, 2.2, 3.3}}
+		res := make(map[string]any)
+		From(input).AsMap(&res)
+		assert.EqualValues(t, wanted, res)
+	})
+}
