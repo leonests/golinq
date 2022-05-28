@@ -3,6 +3,8 @@ package golinq
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFromSliceAndString(t *testing.T) {
@@ -63,31 +65,27 @@ func TestFromMap(t *testing.T) {
 	}
 
 	t.Run("IntList", func(t *testing.T) {
-		res := FromSlice(test.IntList).ToMap()
-		if !reflect.DeepEqual(res, wanted.MapIntInt) {
-			t.Fail()
-		}
+		res := make(map[int]int)
+		FromSlice(test.IntList).AsMap(&res)
+		assert.EqualValues(t, wanted.MapIntInt, res)
 	})
 
 	t.Run("StringList", func(t *testing.T) {
-		res := FromSlice(test.StrList).ToMap()
-		if !reflect.DeepEqual(res, wanted.MapIntStr) {
-			t.Fail()
-		}
+		res := make(map[int]string)
+		FromSlice(test.StrList).AsMap(&res)
+		assert.EqualValues(t, wanted.MapIntStr, res)
 	})
 
 	t.Run("MapIntStr", func(t *testing.T) {
-		res := FromMap(test.MapIntStr).ToMap()
-		if !reflect.DeepEqual(res, wanted.MapIntStr) {
-			t.Fail()
-		}
+		res := make(map[int]string)
+		FromMap(test.MapIntStr).AsMap(&res)
+		assert.EqualValues(t, wanted.MapIntStr, res)
 	})
 
 	t.Run("MapStrInt", func(t *testing.T) {
-		res := FromMap(test.MapStrInt).ToMap()
-		if !reflect.DeepEqual(res, wanted.MapStrInt) {
-			t.Fail()
-		}
+		res := make(map[string]int)
+		FromMap(test.MapStrInt).AsMap(&res)
+		assert.EqualValues(t, wanted.MapStrInt, res)
 	})
 }
 

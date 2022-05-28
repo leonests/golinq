@@ -3,28 +3,16 @@ package golinq
 import "reflect"
 
 // like C# MoveNext，iterate one item as index-value or key-value pair, check if out of boundary
-type IMoveNext[K comparable, V any] func() (key K, value V, ok bool)
+type IMoveNext[K, V any] func() (key K, value V, ok bool)
 
 // generic enumerable interface
-type IEnumerable[K comparable, V any] interface {
+type IEnumerable[K, V any] interface {
 	Enumerate() IMoveNext[K, V]
 }
 
 // generic enumerable object, as a connector of different manipulations
-type IEnumerator[K comparable, V any] struct {
+type IEnumerator[K, V any] struct {
 	Enumerate func() IMoveNext[K, V]
-}
-
-type MoveNext func() (key, value any, ok bool)
-
-// non-generic enumerable interface
-type Enumerable interface {
-	Enumerate() MoveNext
-}
-
-// non-generic enumerable object, as a connector of different manipulations
-type Enumerator struct {
-	Enumerate func() MoveNext
 }
 
 // if object is array, just convert it to slice, for example:
@@ -71,6 +59,7 @@ func FromMap[K comparable, V any](object map[K]V) IEnumerator[K, V] {
 	}
 }
 
+
 func FromChan[T any](object <-chan T) IEnumerator[int, T] {
 	return IEnumerator[int, T]{
 		Enumerate: func() IMoveNext[int, T] {
@@ -112,9 +101,21 @@ func Range(begin, count int) IEnumerator[int, int] {
 	}
 }
 
+// type MoveNext func() (key, value any, ok bool)
+
+// // non-generic enumerable interface
+// type Enumerable interface {
+// 	Enumerate() MoveNext
+// }
+
+// // non-generic enumerable object, as a connector of different manipulations
+// type Enumerator struct {
+// 	Enumerate func() MoveNext
+// }
+
 // non-generic version, there is cost penalty
 // the only 1 entry for non-generic version
-func From(object any) Enumerator {
+func From(object any) IEnumerator[any, any] {
 	obj := reflect.ValueOf(object)
 	if obj.Kind() == reflect.Ptr {
 		obj = obj.Elem()
@@ -122,8 +123,8 @@ func From(object any) Enumerator {
 	switch obj.Kind() {
 	case reflect.Slice, reflect.Array:
 		length := obj.Len()
-		return Enumerator{
-			Enumerate: func() MoveNext {
+		return IEnumerator[any, any]{
+			Enumerate: func() IMoveNext[any, any] {
 				index := 0
 
 				return func() (k, v any, ok bool) {
@@ -139,8 +140,8 @@ func From(object any) Enumerator {
 		}
 	case reflect.Map:
 		length := obj.Len()
-		return Enumerator{
-			Enumerate: func() MoveNext {
+		return IEnumerator[any, any]{
+			Enumerate: func() IMoveNext[any, any] {
 				index := 0
 				keys := obj.MapKeys() // sequence may change
 
@@ -156,8 +157,8 @@ func From(object any) Enumerator {
 			},
 		}
 	case reflect.Chan:
-		return Enumerator{
-			Enumerate: func() MoveNext {
+		return IEnumerator[any, any]{
+			Enumerate: func() IMoveNext[any, any] {
 				index := 0
 				return func() (k, v any, ok bool) {
 					k = index
@@ -170,8 +171,8 @@ func From(object any) Enumerator {
 	case reflect.String:
 		runes := []rune(object.(string))
 		length := len(runes)
-		return Enumerator{
-			Enumerate: func() MoveNext {
+		return IEnumerator[any, any]{
+			Enumerate: func() IMoveNext[any, any] {
 				index := 0
 				return func() (k, v any, ok bool) {
 					ok = index < length
@@ -186,8 +187,8 @@ func From(object any) Enumerator {
 		}
 
 	default:
-		e := object.(Enumerable)
-		return Enumerator{
+		e := object.(IEnumerable[any, any])
+		return IEnumerator[any, any]{
 			Enumerate: e.Enumerate,
 		}
 	}
