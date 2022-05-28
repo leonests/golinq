@@ -33,7 +33,8 @@ func TestGenericDestination(t *testing.T) {
 	})
 
 	t.Run("IntList", func(t *testing.T) {
-		res := FromSlice(test.IntList).Where(func(i1, i2 int) bool { return i1 > 4 }).ToMap()
+		res := make(map[int]int)
+		FromSlice(test.IntList).Where(func(i1, i2 int) bool { return i1 > 4 }).AsMap(&res)
 		if !reflect.DeepEqual(res, wanted.MapIntInt) {
 			t.Fail()
 		}
@@ -47,7 +48,8 @@ func TestGenericDestination(t *testing.T) {
 	})
 
 	t.Run("MapIntStr", func(t *testing.T) {
-		res := FromMap(test.MapIntStr).Where(func(i int, s string) bool { return i < 0 }).ToMap()
+		res := make(map[int]string)
+		FromMap(test.MapIntStr).Where(func(i int, s string) bool { return i < 0 }).AsMap(&res)
 		if !reflect.DeepEqual(res, wanted.MapIntStr) {
 			t.Fail()
 		}
@@ -89,7 +91,7 @@ func TestResult(t *testing.T) {
 	}
 	t.Run("String", func(t *testing.T) {
 		var res []rune
-		FromString(test.Str).Select(func(i int, r rune) any { return r }).Result(&res)
+		FromString(test.Str).Select(func(i int, r rune) any { return r }).AsSlice(&res)
 		if !reflect.DeepEqual(res, wanted.RuneList) {
 			t.Fail()
 		}
@@ -97,7 +99,7 @@ func TestResult(t *testing.T) {
 
 	t.Run("IntList", func(t *testing.T) {
 		var res []string
-		FromSlice(test.IntList).Select(func(i1, i2 int) any { return fmt.Sprintf("%d", i2) }).Result(&res)
+		FromSlice(test.IntList).Select(func(i1, i2 int) any { return fmt.Sprintf("%d", i2) }).AsSlice(&res)
 		if !reflect.DeepEqual(res, wanted.StrList) {
 			t.Fail()
 		}
@@ -106,7 +108,7 @@ func TestResult(t *testing.T) {
 	t.Run("StringList", func(t *testing.T) {
 		var res []map[string]int
 		wanted := []map[string]int{{"g": 0}, {"e": 1}, {"n": 2}, {"e": 3}, {"r": 4}, {"i": 5}, {"c": 6}}
-		FromSlice(test.StrList).Select(func(i int, s string) any { return map[string]int{s: i} }).Result(&res)
+		FromSlice(test.StrList).Select(func(i int, s string) any { return map[string]int{s: i} }).AsSlice(&res)
 		if !reflect.DeepEqual(res, wanted) {
 			t.Fail()
 		}

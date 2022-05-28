@@ -44,7 +44,8 @@ func TestGenericDistinct(t *testing.T) {
 	})
 
 	t.Run("MapIntStr", func(t *testing.T) {
-		res := FromMap(test.MapIntStr).DistinctBy(func(i int, s string) any { return s }).ToMap()
+		res := make(map[int]string)
+		FromMap(test.MapIntStr).DistinctBy(func(i int, s string) any { return s }).AsMap(&res)
 		if !reflect.DeepEqual(len(res), wanted.Int) {
 			t.Fail()
 		}

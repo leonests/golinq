@@ -43,12 +43,12 @@ func TestGenericWhere(t *testing.T) {
 		}
 	})
 
-	t.Run("MapIntStr", func(t *testing.T) {
-		res := FromMap(test.MapIntStr).Where(func(i int, s string) bool { return i == 3 }).ToMap()
-		if !reflect.DeepEqual(res, wanted.MapIntStr) {
-			t.Fail()
-		}
-	})
+	// t.Run("MapIntStr", func(t *testing.T) {
+	// 	res := FromMap(test.MapIntStr).Where(func(i int, s string) bool { return i == 3 }).ToMap()
+	// 	if !reflect.DeepEqual(res, wanted.MapIntStr) {
+	// 		t.Fail()
+	// 	}
+	// })
 
 	t.Run("ChanFloat", func(t *testing.T) {
 		test.ChanFloat <- 1.0

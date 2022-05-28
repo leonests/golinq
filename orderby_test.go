@@ -45,11 +45,13 @@ func TestGenericOrderBy(t *testing.T) {
 	})
 
 	t.Run("MapIntStr", func(t *testing.T) {
-		res := FromMap(test.MapIntStr).OrderBy(func(i int, s string) any { return i }).ToMap()
+		res := make(map[int]string)
+		FromMap(test.MapIntStr).OrderBy(func(i int, s string) any { return i }).AsMap(&res)
 		if !reflect.DeepEqual(res, wanted.MapIntStr) {
 			t.Fail()
 		}
 	})
+
 	t.Run("MapStrInt", func(t *testing.T) {
 		res := FromMap(test.MapStrInt).OrderBy(func(s string, i int) any { return s }).
 			Select(func(s string, i int) any { return s }).ToSlice()
@@ -61,7 +63,7 @@ func TestGenericOrderBy(t *testing.T) {
 	t.Run("IntList1", func(t *testing.T) {
 		res := make([]float64, 0)
 		FromSlice(test.IntList).OrderBy(func(i1, i2 int) any { return -i2 }).
-			Select(func(i1, i2 int) any { return float64(i2) }).Result(&res)
+			Select(func(i1, i2 int) any { return float64(i2) }).AsSlice(&res)
 		if !reflect.DeepEqual(res, wanted.FloatList) {
 			t.Fail()
 		}

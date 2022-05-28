@@ -2,12 +2,12 @@ package golinq
 
 import "reflect"
 
-type sorter[K comparable, V any] struct {
+type sorter[K, V any] struct {
 	key   K
 	value V
 	merge any
 }
-type sorters[K comparable, V any] []sorter[K, V]
+type sorters[K, V any] []sorter[K, V]
 
 func (s sorters[K, V]) Len() int {
 	return len(s)
