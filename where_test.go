@@ -2,8 +2,9 @@ package golinq
 
 import (
 	"math"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenericWhere(t *testing.T) {
@@ -24,31 +25,24 @@ func TestGenericWhere(t *testing.T) {
 	}
 	t.Run("String", func(t *testing.T) {
 		res := FromString(test.Str).Where(func(i int, v rune) bool { return v > 'e' }).ToSlice()
-		if !reflect.DeepEqual(res, wanted.RuneList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.RuneList, res)
 	})
 
 	t.Run("IntList", func(t *testing.T) {
 		res := FromSlice(test.IntList).Where(func(i int, v int) bool { return v%3 == 0 }).ToSlice()
-		if !reflect.DeepEqual(res, wanted.IntList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.IntList, res)
 	})
 
 	t.Run("StringList", func(t *testing.T) {
 		res := FromSlice(test.StrList).Where(func(i int, s string) bool { return s < "e" }).ToSlice()
-		if !reflect.DeepEqual(res, wanted.StrList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.StrList, res)
 	})
 
-	// t.Run("MapIntStr", func(t *testing.T) {
-	// 	res := FromMap(test.MapIntStr).Where(func(i int, s string) bool { return i == 3 }).ToMap()
-	// 	if !reflect.DeepEqual(res, wanted.MapIntStr) {
-	// 		t.Fail()
-	// 	}
-	// })
+	t.Run("MapIntStr", func(t *testing.T) {
+		res := make(map[int]string)
+		FromMap(test.MapIntStr).Where(func(i int, s string) bool { return i == 3 }).AsMap(&res)
+		assert.Equal(t, wanted.MapIntStr, res)
+	})
 
 	t.Run("ChanFloat", func(t *testing.T) {
 		test.ChanFloat <- 1.0
@@ -56,8 +50,6 @@ func TestGenericWhere(t *testing.T) {
 		test.ChanFloat <- 3.0
 		close(test.ChanFloat)
 		res := FromChan(test.ChanFloat).Where(func(idx int, v float64) bool { return math.Abs(v/2-1.0) <= 1e-5 }).ToSlice()
-		if !reflect.DeepEqual(res, wanted.FloatList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.FloatList, res)
 	})
 }

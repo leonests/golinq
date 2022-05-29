@@ -1,7 +1,6 @@
 package golinq
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,30 +22,22 @@ func TestFromSliceAndString(t *testing.T) {
 	}
 	t.Run("String", func(t *testing.T) {
 		res := FromString(test.Str).ToSlice()
-		if !reflect.DeepEqual(res, wanted.RuneList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.RuneList, res)
 	})
 
 	t.Run("IntList", func(t *testing.T) {
 		res := FromSlice(test.IntList).ToSlice()
-		if !reflect.DeepEqual(res, wanted.IntList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.IntList, res)
 	})
 
 	t.Run("StringList", func(t *testing.T) {
 		res := FromSlice(test.StrList).ToSlice()
-		if !reflect.DeepEqual(res, wanted.StrList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.StrList, res)
 	})
 
 	t.Run("Array", func(t *testing.T) {
 		res := FromSlice(test.ArrayAny[:]).ToSlice()
-		if !reflect.DeepEqual(res, wanted.AnyList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.AnyList, res)
 	})
 }
 
@@ -67,25 +58,25 @@ func TestFromMap(t *testing.T) {
 	t.Run("IntList", func(t *testing.T) {
 		res := make(map[int]int)
 		FromSlice(test.IntList).AsMap(&res)
-		assert.EqualValues(t, wanted.MapIntInt, res)
+		assert.Equal(t, wanted.MapIntInt, res)
 	})
 
 	t.Run("StringList", func(t *testing.T) {
 		res := make(map[int]string)
 		FromSlice(test.StrList).AsMap(&res)
-		assert.EqualValues(t, wanted.MapIntStr, res)
+		assert.Equal(t, wanted.MapIntStr, res)
 	})
 
 	t.Run("MapIntStr", func(t *testing.T) {
 		res := make(map[int]string)
 		FromMap(test.MapIntStr).AsMap(&res)
-		assert.EqualValues(t, wanted.MapIntStr, res)
+		assert.Equal(t, wanted.MapIntStr, res)
 	})
 
 	t.Run("MapStrInt", func(t *testing.T) {
 		res := make(map[string]int)
 		FromMap(test.MapStrInt).AsMap(&res)
-		assert.EqualValues(t, wanted.MapStrInt, res)
+		assert.Equal(t, wanted.MapStrInt, res)
 	})
 }
 
@@ -103,9 +94,7 @@ func TestFromChan(t *testing.T) {
 		test.ChanFloat <- 3.0
 		close(test.ChanFloat)
 		res := FromChan(test.ChanFloat).ToSlice()
-		if !reflect.DeepEqual(res, wanted.FloatList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.FloatList, res)
 	})
 }
 
@@ -125,40 +114,28 @@ func TestFromJustAndRange(t *testing.T) {
 	}
 	t.Run("JustString", func(t *testing.T) {
 		res := Just(test.Str).ToSlice()
-		if !reflect.DeepEqual(res, wanted.StrList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.StrList, res)
 	})
 	t.Run("JustFloat", func(t *testing.T) {
 		res := Just(test.FloatList...).ToSlice()
-		if !reflect.DeepEqual(res, wanted.FloatList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.FloatList, res)
 	})
 	t.Run("JustInt", func(t *testing.T) {
 		res := Just(test.IntList...).ToSlice()
-		if !reflect.DeepEqual(res, wanted.IntList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.IntList, res)
 	})
 	t.Run("JustAny", func(t *testing.T) {
 		res := Just(test.ArrayAny[:]...).ToSlice()
-		if !reflect.DeepEqual(res, wanted.AnyList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.AnyList, res)
 	})
 	t.Run("JustAny", func(t *testing.T) {
 		res := Just(test.ArrayAny[:]).ToSlice()
-		if !reflect.DeepEqual(res, [][]any{{1, 2, 3}}) {
-			t.Fail()
-		}
+		assert.Equal(t, [][]any{{1, 2, 3}}, res)
 	})
 
 	t.Run("Range", func(t *testing.T) {
 		res := Range(1, 6).ToSlice()
-		if !reflect.DeepEqual(res, wanted.IntList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.IntList, res)
 	})
 }
 
@@ -234,7 +211,7 @@ func TestFrom(t *testing.T) {
 		}
 		for _, test := range tests {
 			res := From(test.input).ToSlice()
-			assert.EqualValues(t, test.wanted, res)
+			assert.Equal(t, test.wanted, res)
 		}
 	})
 
@@ -243,7 +220,7 @@ func TestFrom(t *testing.T) {
 		wanted := map[int]string{1: "1", 2: "2", 3: "3"}
 		res := make(map[int]string)
 		From(input).AsMap(&res)
-		assert.EqualValues(t, wanted, res)
+		assert.Equal(t, wanted, res)
 	})
 
 	t.Run("MapStringAny", func(t *testing.T) {
@@ -251,6 +228,6 @@ func TestFrom(t *testing.T) {
 		wanted := map[string]any{"3": []any{1, 2.2, 3.3}}
 		res := make(map[string]any)
 		From(input).AsMap(&res)
-		assert.EqualValues(t, wanted, res)
+		assert.Equal(t, wanted, res)
 	})
 }

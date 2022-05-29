@@ -2,8 +2,9 @@ package golinq
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenericForeach(t *testing.T) {
@@ -21,25 +22,19 @@ func TestGenericForeach(t *testing.T) {
 	t.Run("String", func(t *testing.T) {
 		var res []rune
 		FromString(test.Str).Foreach(func(i int, v rune) { res = append(res, v+1) })
-		if !reflect.DeepEqual(res, wanted.RuneList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.RuneList, res)
 	})
 
 	t.Run("IntList", func(t *testing.T) {
 		var res []string
 		FromSlice(test.IntList).Foreach(func(i, v int) { res = append(res, fmt.Sprintf("%d", v+1)) })
-		if !reflect.DeepEqual(res, wanted.StrList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.StrList, res)
 	})
 
 	t.Run("StringList", func(t *testing.T) {
 		var res []map[string]int
 		wanted := []map[string]int{{"g": 0}, {"e": 1}, {"n": 2}, {"e": 3}, {"r": 4}, {"i": 5}, {"c": 6}}
 		FromSlice(test.StrList).Foreach(func(i int, s string) { res = append(res, map[string]int{s: i}) })
-		if !reflect.DeepEqual(res, wanted) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted, res)
 	})
 }

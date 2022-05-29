@@ -3,15 +3,15 @@ package golinq
 // current golang version 1.18.2 does not support generic in
 // anonymous function, nor generic type parameter in method
 // so here just return any, it will break the type chain
-func (src Enumerator[K, V]) Select(selector func(K, V) any) Enumerator[int, any] {
-	return Enumerator[int, any]{
-		Enumerate: func() MoveNext[int, any] {
+func (src Enumerator[K, V]) Select(selector func(K, V) any) Enumerator[K, any] {
+	return Enumerator[K, any]{
+		Enumerate: func() MoveNext[K, any] {
 			index := 0
 			moveNext := src.Enumerate()
-			return func() (k int, v any, ok bool) {
+			return func() (k K, v any, ok bool) {
 				key, value, ok := moveNext()
 				if ok {
-					k = index
+					k = key
 					v = selector(key, value)
 					index++
 				}

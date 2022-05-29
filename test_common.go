@@ -3,6 +3,8 @@ package golinq
 type GenericTest struct {
 	Str       string
 	Int       int
+	Int64     int64
+	Float64   float64
 	IntList   []int
 	StrList   []string
 	AnyList   []any

@@ -1,8 +1,9 @@
 package golinq
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenericReverse(t *testing.T) {
@@ -13,28 +14,22 @@ func TestGenericReverse(t *testing.T) {
 		StrList: []string{"g", "e", "n", "e", "r", "i", "c"},
 	}
 	wanted := GenericTest{
-		RuneList: []rune{'c','i','r','e','n','e','g'},
-		IntList: []int{1, 2, 3, 4, 5, 6},
-		StrList: []string{"c", "i", "r", "e", "n", "e", "g"},
+		RuneList: []rune{'c', 'i', 'r', 'e', 'n', 'e', 'g'},
+		IntList:  []int{1, 2, 3, 4, 5, 6},
+		StrList:  []string{"c", "i", "r", "e", "n", "e", "g"},
 	}
 	t.Run("String", func(t *testing.T) {
 		res := FromString(test.Str).Reverse().ToSlice()
-		if !reflect.DeepEqual(res, wanted.RuneList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.RuneList, res)
 	})
 
 	t.Run("IntList", func(t *testing.T) {
 		res := FromSlice(test.IntList).Reverse().ToSlice()
-		if !reflect.DeepEqual(res, wanted.IntList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.IntList, res)
 	})
 
 	t.Run("StringList", func(t *testing.T) {
 		res := FromSlice(test.StrList).Reverse().ToSlice()
-		if !reflect.DeepEqual(res, wanted.StrList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.StrList, res)
 	})
 }

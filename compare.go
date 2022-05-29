@@ -105,3 +105,39 @@ func getInternalCompare(item any) func(any, any) int {
 		}
 	}
 }
+
+func convert2Int64(number any) func(x any) int64 {
+	switch number.(type) {
+	case int, int8, int16, int32, int64:
+		return func(x any) int64 {
+			return reflect.ValueOf(x).Int()
+		}
+	case uint, uint8, uint16, uint32, uint64:
+		return func(x any) int64 {
+			return int64(reflect.ValueOf(x).Uint())
+		}
+	}
+	return func(x any) int64 {
+		return x.(int64)
+	}
+}
+
+func convert2Float64(number any) func(number any) float64 {
+	switch number.(type) {
+	case int, int8, int16, int32, int64:
+		return func(x any) float64 {
+			return float64(reflect.ValueOf(x).Int())
+		}
+	case uint, uint8, uint16, uint32, uint64:
+		return func(x any) float64 {
+			return float64(reflect.ValueOf(x).Uint())
+		}
+	case float32, float64:
+		return func(x any) float64 {
+			return reflect.ValueOf(x).Float()
+		}
+	}
+	return func(x any) float64 {
+		return x.(float64)
+	}
+}

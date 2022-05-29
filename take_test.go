@@ -1,8 +1,9 @@
 package golinq
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenericTake(t *testing.T) {
@@ -19,22 +20,16 @@ func TestGenericTake(t *testing.T) {
 	}
 	t.Run("String", func(t *testing.T) {
 		res := FromString(test.Str).Skip(3).Take(3).ToSlice()
-		if !reflect.DeepEqual(res, wanted.RuneList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.RuneList, res)
 	})
 
 	t.Run("IntList", func(t *testing.T) {
 		res := FromSlice(test.IntList).Skip(3).Take(1).ToSlice()
-		if !reflect.DeepEqual(res, wanted.IntList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.IntList, res)
 	})
 
 	t.Run("StringList", func(t *testing.T) {
 		res := FromSlice(test.StrList).Skip(3).Take(0).ToSlice()
-		if !reflect.DeepEqual(res, wanted.StrList) {
-			t.Fail()
-		}
+		assert.Equal(t, wanted.StrList, res)
 	})
 }

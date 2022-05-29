@@ -46,7 +46,7 @@ var persons = []Person{
 }
 
 func ExampleFromSlice() {
-	// Who Is Youngest
+	// Who Is The Youngest
 	// without considering persons with the same age
 	res := FromSlice(persons).
 		OrderBy(func(i int, p Person) any { return p.Age }).
@@ -56,7 +56,7 @@ func ExampleFromSlice() {
 }
 
 func ExampleFromMap() {
-	// Who Has Most Expensive Book
+	// Who Has The Most Expensive Book
 	res := FromSlice(persons).
 		OrderBy(func(i int, p Person) any {
 			return FromMap(p.BookPrices).OrderBy(func(s string, f float64) any {
