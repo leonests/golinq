@@ -5,29 +5,38 @@ import "reflect"
 type sorter[K, V any] struct {
 	key   K
 	value V
-	merge any
 }
-type sorters[K, V any] []sorter[K, V]
-
-func (s sorters[K, V]) Len() int {
-	return len(s)
+type multiSorter[K, V any] struct {
+	sorters []sorter[K, V]
+	conds   []sortCond[K, V]
 }
 
-func (s sorters[K, V]) Less(i, j int) bool {
-	x, y := s[i].merge, s[j].merge
-	compare := getInternalCompare(x)
-	switch compare(x, y) {
-	case -1:
-		return true
-	case 1:
-		return false
-	default:
-		return false
+type sortCond[K, V any] struct {
+	selector func(K, V) any
+	desc     bool
+	compare  compareFunc
+}
+type compareFunc func(x, y any) int
+
+func (s multiSorter[K, V]) Len() int {
+	return len(s.sorters)
+}
+func (s multiSorter[K, V]) Swap(i, j int) {
+	s.sorters[i], s.sorters[j] = s.sorters[j], s.sorters[i]
+}
+
+func (s multiSorter[K, V]) Less(i, j int) bool {
+	x, y := s.sorters[i], s.sorters[j]
+	for _, cond := range s.conds {
+		selector := cond.selector
+		switch cond.compare(selector(x.key, x.value), selector(y.key, y.value)) {
+		case -1:
+			return !cond.desc
+		case 1:
+			return cond.desc
+		}
 	}
-
-}
-func (s sorters[K, V]) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
+	return false //all the same, keep the original order
 }
 
 // Comparable is an interface that self-defined collection element has to implemented
@@ -36,7 +45,7 @@ type Comparable interface {
 	CompareTo(Comparable) int
 }
 
-func getInternalCompare(item any) func(any, any) int {
+func getCompareFunc(item any) compareFunc {
 	switch item.(type) {
 	case int, int8, int16, int32, int64:
 		return func(x, y any) int {

@@ -4,31 +4,93 @@ import (
 	"sort"
 )
 
-func (src Enumerator[K, V]) OrderBy(selector func(K, V) any) Enumerator[K, V] {
-	return Enumerator[K, V]{
-		Enumerate: func() MoveNext[K, V] {
-			tmp := src.sort(selector)
-			index, length := 0, len(tmp)
-			return func() (k K, v V, ok bool) {
-				ok = index < length
-				if ok {
-					k, v = tmp[index].key, tmp[index].value
-					index++
+type IEnumerator[K, V any] struct {
+	Enumerator[K, V]                  // inherit all the methods of Enumerator
+	source           Enumerator[K, V] // keep the source
+	conditions       []sortCond[K, V] // order conditions
+}
+
+func (src Enumerator[K, V]) OrderBy(selector func(K, V) any) IEnumerator[K, V] {
+	return IEnumerator[K, V]{
+		source:     src,
+		conditions: []sortCond[K, V]{{selector: selector, desc: false}},
+		Enumerator: Enumerator[K, V]{
+			Enumerate: func() MoveNext[K, V] {
+				tmp := src.sort([]sortCond[K, V]{{selector: selector, desc: false}})
+				index, length := 0, len(tmp.sorters)
+				return func() (k K, v V, ok bool) {
+					ok = index < length
+					if ok {
+						k, v = tmp.sorters[index].key, tmp.sorters[index].value
+						index++
+					}
+					return
 				}
-				return
-			}
+			},
+		},
+	}
+}
+func (src Enumerator[K, V]) OrderByDescending(selector func(K, V) any) IEnumerator[K, V] {
+	return IEnumerator[K, V]{
+		source:     src,
+		conditions: []sortCond[K, V]{{selector: selector, desc: true}},
+		Enumerator: Enumerator[K, V]{
+			Enumerate: func() MoveNext[K, V] {
+				tmp := src.sort([]sortCond[K, V]{{selector: selector, desc: true}})
+				index, length := 0, len(tmp.sorters)
+				return func() (k K, v V, ok bool) {
+					ok = index < length
+					if ok {
+						k, v = tmp.sorters[index].key, tmp.sorters[index].value
+						index++
+					}
+					return
+				}
+			},
 		},
 	}
 }
 
-func (src Enumerator[K, V]) sort(selector func(K, V) any) (items sorters[K, V]) {
-	moveNext := src.Enumerate()
-	for k, v, ok := moveNext(); ok; k, v, ok = moveNext() {
-		items = append(items, sorter[K, V]{k, v, selector(k, v)})
+func (src IEnumerator[K, V]) ThenBy(selector func(K, V) any) IEnumerator[K, V] {
+	return IEnumerator[K, V]{
+		source:     src.source,
+		conditions: append(src.conditions, sortCond[K, V]{selector: selector, desc: false}),
+		Enumerator: Enumerator[K, V]{
+			Enumerate: func() MoveNext[K, V] {
+				tmp := src.source.sort(append(src.conditions, sortCond[K, V]{selector: selector, desc: false}))
+				index, length := 0, len(tmp.sorters)
+				return func() (k K, v V, ok bool) {
+					ok = index < length
+					if ok {
+						k, v = tmp.sorters[index].key, tmp.sorters[index].value
+						index++
+					}
+					return
+				}
+			},
+		},
 	}
-	if len(items) == 0 {
+}
+
+func (src Enumerator[K, V]) sort(conds []sortCond[K, V]) (multi multiSorter[K, V]) {
+	moveNext := src.Enumerate()
+	sorters := make([]sorter[K, V], 0)
+	for k, v, ok := moveNext(); ok; k, v, ok = moveNext() {
+		sorters = append(sorters, sorter[K, V]{k, v})
+	}
+	if len(sorters) == 0 {
 		return
 	}
-	sort.Sort(items)
+
+	for i := 0; i < len(conds); i++ {
+		merge := conds[i].selector(sorters[0].key, sorters[0].value)
+		conds[i].compare = getCompareFunc(merge)
+	}
+
+	multi = multiSorter[K, V]{
+		sorters: sorters,
+		conds: conds,
+	}
+	sort.Sort(multi)
 	return
 }

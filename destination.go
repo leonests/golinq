@@ -1,6 +1,7 @@
 package golinq
 
 import (
+	"math"
 	"reflect"
 )
 
@@ -100,7 +101,7 @@ func (src Enumerator[K, V]) Max() V {
 	if !ok {
 		return max
 	}
-	compare := getInternalCompare(max)
+	compare := getCompareFunc(max)
 	for _, v, ok := moveNext(); ok; _, v, ok = moveNext() {
 		if compare(v, max) == 1 {
 			max = v
@@ -115,7 +116,7 @@ func (src Enumerator[K, V]) Min() V {
 	if !ok {
 		return min
 	}
-	compare := getInternalCompare(min)
+	compare := getCompareFunc(min)
 	for _, v, ok := moveNext(); ok; _, v, ok = moveNext() {
 		if compare(v, min) == -1 {
 			min = v
@@ -150,4 +151,20 @@ func (src Enumerator[K, V]) Sum2Float() float64 {
 		sum = sum + converter(v)
 	}
 	return sum
+}
+
+func (src Enumerator[K, V]) Average() float64 {
+	moveNext := src.Enumerate()
+	_, first, ok := moveNext()
+	if !ok {
+		return math.NaN()
+	}
+	converter := convert2Float64(first)
+	sum := converter(first)
+	count := 1
+	for _, v, ok := moveNext(); ok; _, v, ok = moveNext() {
+		sum = sum + converter(v)
+		count++
+	}
+	return sum / float64(count)
 }

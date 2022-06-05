@@ -97,6 +97,11 @@ func TestGenericDestination(t *testing.T) {
 		res := FromSlice(test.IntList).Select(func(i int, v int) any { return v }).Min()
 		assert.Equal(t, 1, res)
 	})
+
+	t.Run("IntList6", func(t *testing.T) {
+		res := FromSlice(test.IntList).Select(func(i int, v int) any { return v }).Average()
+		assert.Equal(t, 3.5, res)
+	})
 }
 
 func TestResult(t *testing.T) {
