@@ -1,5 +1,6 @@
 package golinq
 
+// Intersect returns the set intersection of two collections, without duplicates
 func (src Enumerator[K, V]) Intersect(obj Enumerator[K, V]) Enumerator[K, V] {
 	return Enumerator[K, V]{
 		Enumerate: func() MoveNext[K, V] {
@@ -25,6 +26,7 @@ func (src Enumerator[K, V]) Intersect(obj Enumerator[K, V]) Enumerator[K, V] {
 	}
 }
 
+// Supersect returns the set intersection of two collections, with duplicates
 func (src Enumerator[K, V]) Supersect(obj Enumerator[K, V]) Enumerator[K, V] {
 	return Enumerator[K, V]{
 		Enumerate: func() MoveNext[K, V] {
@@ -35,7 +37,7 @@ func (src Enumerator[K, V]) Supersect(obj Enumerator[K, V]) Enumerator[K, V] {
 			for _, v, ok := moveNext2(); ok; _, v, ok = moveNext2() {
 				if _, exist := set[v]; !exist {
 					set[v] = 1
-				}else  {
+				} else {
 					set[v]++
 				}
 			}
@@ -49,7 +51,6 @@ func (src Enumerator[K, V]) Supersect(obj Enumerator[K, V]) Enumerator[K, V] {
 							}
 							return
 						}
-						
 					}
 				}
 				return

@@ -1,5 +1,6 @@
 package golinq
 
+// Union merges two collections into one set union, which will exclude duplicates
 func (src Enumerator[K, V]) Union(obj Enumerator[K, V]) Enumerator[K, V] {
 	return Enumerator[K, V]{
 		Enumerate: func() MoveNext[K, V] {
