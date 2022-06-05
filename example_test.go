@@ -17,9 +17,9 @@ var persons = []Person{
 		Name:         "Jack",
 		Age:          15,
 		Hobbies:      []string{"basketball", "running"},
-		LuckyNumbers: []int{31, 7, 19},
+		LuckyNumbers: []int{31, 7, 91},
 		BookPrices: map[string]float64{
-			"linux": 32.5,
+			"linux": 101.2,
 			"apple": 58.1,
 		},
 	},
@@ -62,10 +62,14 @@ func ExampleFromMap() {
 			return FromMap(p.BookPrices).OrderBy(func(s string, f float64) any {
 				return f
 			}).Last()
+		}).ThenBy(func(i int, p Person) any {
+			return FromSlice(p.LuckyNumbers).OrderByDescending(func(i, n int) any {
+				return n
+			}).First()
 		}).
 		Last().Name
 	fmt.Println(res)
-	// Output: Rose
+	// Output: Jack
 }
 
 func ExampleSelect() {
