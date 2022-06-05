@@ -63,10 +63,10 @@ func ExampleFromMap() {
 				return f
 			}).Last()
 		}).ThenBy(func(i int, p Person) any {
-			return FromSlice(p.LuckyNumbers).OrderByDescending(func(i, n int) any {
-				return n
-			}).First()
-		}).
+		return FromSlice(p.LuckyNumbers).OrderByDescending(func(i, n int) any {
+			return n
+		}).First()
+	}).
 		Last().Name
 	fmt.Println(res)
 	// Output: Jack
@@ -94,7 +94,7 @@ func ExampleJust() {
 		}).
 		Last().Name
 	fmt.Println(res)
-	// Output: Rose
+	// Output: Jack
 }
 
 func Example() {
