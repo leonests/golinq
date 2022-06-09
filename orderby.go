@@ -4,14 +4,14 @@ import (
 	"sort"
 )
 
-type IEnumerator[K, V any] struct {
+type OrderEnumerator[K, V any] struct {
 	Enumerator[K, V]                  // inherit all the methods of Enumerator
 	source           Enumerator[K, V] // keep the source
 	conditions       []sortCond[K, V] // order conditions
 }
 
-func (src Enumerator[K, V]) OrderBy(selector func(K, V) any) IEnumerator[K, V] {
-	return IEnumerator[K, V]{
+func (src Enumerator[K, V]) OrderBy(selector func(K, V) any) OrderEnumerator[K, V] {
+	return OrderEnumerator[K, V]{
 		source:     src,
 		conditions: []sortCond[K, V]{{selector: selector, desc: false}},
 		Enumerator: Enumerator[K, V]{
@@ -30,8 +30,8 @@ func (src Enumerator[K, V]) OrderBy(selector func(K, V) any) IEnumerator[K, V] {
 		},
 	}
 }
-func (src Enumerator[K, V]) OrderByDescending(selector func(K, V) any) IEnumerator[K, V] {
-	return IEnumerator[K, V]{
+func (src Enumerator[K, V]) OrderByDescending(selector func(K, V) any) OrderEnumerator[K, V] {
+	return OrderEnumerator[K, V]{
 		source:     src,
 		conditions: []sortCond[K, V]{{selector: selector, desc: true}},
 		Enumerator: Enumerator[K, V]{
@@ -51,8 +51,8 @@ func (src Enumerator[K, V]) OrderByDescending(selector func(K, V) any) IEnumerat
 	}
 }
 
-func (src IEnumerator[K, V]) ThenBy(selector func(K, V) any) IEnumerator[K, V] {
-	return IEnumerator[K, V]{
+func (src OrderEnumerator[K, V]) ThenBy(selector func(K, V) any) OrderEnumerator[K, V] {
+	return OrderEnumerator[K, V]{
 		source:     src.source,
 		conditions: append(src.conditions, sortCond[K, V]{selector: selector, desc: false}),
 		Enumerator: Enumerator[K, V]{
