@@ -21,6 +21,24 @@ func (src Enumerator[K, V]) Select(selector func(K, V) any) Enumerator[K, any] {
 	}
 }
 
+func (src Enumerator[K, V]) SelectV(selector func(K, V) V) Enumerator[K, V] {
+	return Enumerator[K, V]{
+		Enumerate: func() MoveNext[K, V] {
+			index := 0
+			moveNext := src.Enumerate()
+			return func() (k K, v V, ok bool) {
+				key, value, ok := moveNext()
+				if ok {
+					k = key
+					v = selector(key, value)
+					index++
+				}
+				return
+			}
+		},
+	}
+}
+
 func (src Enumerator[K, V]) SelectByKV(keySelector, valueSelector func(K, V) any) Enumerator[any, any] {
 	return Enumerator[any, any]{
 		Enumerate: func() MoveNext[any, any] {

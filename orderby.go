@@ -89,7 +89,7 @@ func (src Enumerator[K, V]) sort(conds []sortCond[K, V]) (multi multiSorter[K, V
 
 	multi = multiSorter[K, V]{
 		sorters: sorters,
-		conds: conds,
+		conds:   conds,
 	}
 	sort.Sort(multi)
 	return
