@@ -112,6 +112,7 @@ func TestResult(t *testing.T) {
 		StrList: []string{"g", "e", "n", "e", "r", "i", "c"},
 	}
 	wanted := GenericTest{
+		Int:      6,
 		RuneList: []int32{'g', 'e', 'n', 'e', 'r', 'i', 'c'},
 		IntList:  []int{3, 6},
 		StrList:  []string{"1", "2", "3", "4", "5", "6"},
@@ -133,5 +134,17 @@ func TestResult(t *testing.T) {
 		wanted := []map[string]int{{"g": 0}, {"e": 1}, {"n": 2}, {"e": 3}, {"r": 4}, {"i": 5}, {"c": 6}}
 		FromSlice(test.StrList).Select(func(i int, s string) any { return map[string]int{s: i} }).AsSlice(&res)
 		assert.Equal(t, wanted, res)
+	})
+	
+	t.Run("IntList", func(t *testing.T) {
+		res := FromSlice(test.IntList).Count()
+		assert.Equal(t, wanted.Int, res)
+	})
+
+	t.Run("StringList", func(t *testing.T) {
+		res := FromSlice(test.StrList).CountBy(func(i int, s string) bool {
+			return s != "c"
+		})
+		assert.Equal(t, wanted.Int, res)
 	})
 }
