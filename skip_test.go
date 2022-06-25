@@ -15,7 +15,7 @@ func TestGenericSkip(t *testing.T) {
 	}
 	wanted := GenericTest{
 		RuneList: []rune{'e', 'r', 'i', 'c'},
-		IntList:  []int{3, 4, 5},
+		IntList:  []int{},
 		StrList:  []string{"e", "r", "i", "c"},
 	}
 	t.Run("String", func(t *testing.T) {
@@ -24,7 +24,7 @@ func TestGenericSkip(t *testing.T) {
 	})
 
 	t.Run("IntList", func(t *testing.T) {
-		res := FromSlice(test.IntList).Skip(3).ToSlice()
+		res := FromSlice(test.IntList).Skip(6).ToSlice()
 		assert.Equal(t, wanted.IntList, res)
 	})
 
