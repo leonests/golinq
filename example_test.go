@@ -2,6 +2,7 @@ package golinq
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Person struct {
@@ -104,4 +105,33 @@ func Example() {
 		ToSlice()
 	fmt.Println(res)
 	// Output: [15 18 20]
+}
+
+func ExampleStringComplex() {
+	sentences := []string{
+		"SpaceX is unbelievable",
+		"Tesla is just ok",
+		"Google is great",
+		"there was heavy rain in Shanghai in 2022/07/17",
+		"and it was 14:30 in the afternoon",
+	}
+	res := FromSlice(sentences).
+		SelectMany(func(i int, s string) any {
+			return strings.Split(s, " ")
+		}).
+		GroupBy(func(i int, s any) any {
+			return s
+		}).
+		OrderByDescending(func(k, g any) any {
+			return len(g.([]any))
+		}).
+		ThenBy(func(k, g any) any {
+			return k
+		}).
+		Take(10).
+		Select(func(k, g any) any {
+			return fmt.Sprintf("Word: %s, Count: %d", k, len(g.([]any)))
+		}).
+		ToSlice()
+	fmt.Println(res)
 }

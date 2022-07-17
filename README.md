@@ -35,21 +35,15 @@ type Person struct {
 
 var persons []Person
 
-res := FromSlice(persons).
-	OrderBy(func(i int, p Person) any {
-		return FromMap(p.BookPrices).
-			OrderBy(func(s string, f float64) any {
-				return f
-			}).Last()
-	}).
-	ThenBy(func(i int, p Person) any { // if there are duplicates, ranking by lucky number
-		return FromSlice(p.LuckyNumbers).
-		OrderByDescending(func(i, n int) any {
+res := FromSlice(persons).OrderBy(func(i int, p Person) any {
+		return FromMap(p.BookPrices).OrderBy(func(s string, f float64) any {
+			return f
+		}).Last()
+	}).ThenBy(func(i int, p Person) any { // if there are duplicates, ranking by lucky number
+		return FromSlice(p.LuckyNumbers).OrderByDescending(func(i, n int) any {
 			return n
-		}).
-		First()
-	}).
-	Last().Name
+		}).First()
+	}).Last().Name
 ```
 
 **Example 2: Find who has a hobby of basketball**
