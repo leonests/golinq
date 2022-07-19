@@ -2,7 +2,6 @@ package golinq
 
 import (
 	"fmt"
-	"strings"
 )
 
 type Person struct {
